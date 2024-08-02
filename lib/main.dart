@@ -11,15 +11,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'To-Do-List',
-      // home: Scaffold(
-      //   appBar: AppBar(title: const Text('To-Do-List')),
-      //   body: const TodoList(),
-      //   floatingActionButton: FloatingActionButton(
-      //     child: Icon(Icons.add)
-      //     ,),
-      // ),
       home: TodoList(),
     );
   }
