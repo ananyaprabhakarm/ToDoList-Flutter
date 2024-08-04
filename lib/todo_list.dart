@@ -5,16 +5,14 @@ class TodoList extends StatefulWidget {
   const TodoList({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _TodoListState createState() => _TodoListState();
 }
 
 class _TodoListState extends State<TodoList> {
   List<Todo> todos = [];
+  TextEditingController controller = TextEditingController();
 
-  TextEditingController controller = new TextEditingController();
-
-  _toggleTodo(Todo todo, bool? isChecked) {
+  void _toggleTodo(Todo todo, bool? isChecked) {
     if (isChecked != null) {
       setState(() {
         todo.isdone = isChecked;
@@ -22,7 +20,45 @@ class _TodoListState extends State<TodoList> {
     }
   }
 
-  // _buildItem() {}
+  Future<void> _addTodo() async {
+    final todo = await showDialog<Todo>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('New todo'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Add'),
+              onPressed: () {
+                final todo = Todo(
+                  title: controller.value.text,
+                );
+                controller.clear();
+                Navigator.of(context).pop(todo);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (todo != null) {
+      setState(() {
+        todos.add(todo);
+      });
+    }
+  }
+
   Widget _buildItem(BuildContext context, int index) {
     final todo = todos[index];
     return CheckboxListTile(
@@ -30,38 +66,6 @@ class _TodoListState extends State<TodoList> {
       title: Text(todo.title),
       onChanged: (bool? isChecked) {
         _toggleTodo(todo, isChecked);
-      },
-    );
-  }
-
-  _addTodo() {
-    showDialog<Todo>(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text('New todo'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Add'),
-              onPressed: () {
-                final todo = new Todo(title: controller.value.text);
-                controller.clear();
-                todos.add(todo);
-                Navigator.of(context).pop(todo);
-              },
-            ),
-          ],
-        );
       },
     );
   }
